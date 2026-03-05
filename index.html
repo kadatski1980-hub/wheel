@@ -152,11 +152,7 @@ function saveData(d) {
     var exp = new Date(Date.now() + 48*60*60*1000).toUTCString();
     document.cookie = SK + '=' + encodeURIComponent(val) + '; expires=' + exp + '; path=/; SameSite=None; Secure';
   } catch(e) {}
-  try {
-    if (typeof vkBridge !== 'undefined') {
-      vkBridge.send('VKWebAppStorageSet', {key: SK, value: val});
-    }
-  } catch(e) {}
+
 }
 
 function loadDataSync() {
@@ -387,11 +383,6 @@ function initApp() {
 }
 
 window.onload = function() {
-  try {
-    if (typeof vkBridge !== 'undefined') {
-      vkBridge.send('VKWebAppInit').catch(function(){});
-    }
-  } catch(e) {}
   initApp();
 };
 </script>
