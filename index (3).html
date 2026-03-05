@@ -131,7 +131,7 @@ body{background:#0a0a1a;display:flex;flex-direction:column;align-items:center;ju
 </div>
 
 <script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyL_T_P1h3DSIrGt2qdpFMJuoRUz5VrSs8v-UuwiDixIMEeIN3K9RmBK4OuDL7j47hd/exec';
+const APPS_SCRIPT_URL = 'ВСТАВЬТЕ_ССЫЛКУ_APPS_SCRIPT';
 
 const SK='wheel_v3';
 let _cache=null;
@@ -140,9 +140,11 @@ async function gd(){
   if(_cache)return _cache;
   // Попытка 1: vkBridge storage
   try{
-    const r=await vkBridge.send('VKWebAppStorageGet',{keys:[SK]});
-    const val=r.keys&&r.keys[0]&&r.keys[0].value;
-    if(val){_cache=JSON.parse(val);return _cache;}
+    if(typeof vkBridge!=='undefined'&&vkBridge.supports&&vkBridge.supports('VKWebAppStorageGet')){
+      const r=await vkBridge.send('VKWebAppStorageGet',{keys:[SK]});
+      const val=r.keys&&r.keys[0]&&r.keys[0].value;
+      if(val){_cache=JSON.parse(val);return _cache;}
+    }
   }catch(e){}
   // Попытка 2: localStorage
   try{const v=localStorage.getItem(SK);if(v){_cache=JSON.parse(v);return _cache;}}catch(e){}
@@ -155,7 +157,7 @@ async function sd(d){
   _cache=d;
   const val=JSON.stringify(d);
   // Сохраняем везде
-  try{await vkBridge.send('VKWebAppStorageSet',{key:SK,value:val});}catch(e){}
+  try{if(typeof vkBridge!=='undefined')await vkBridge.send('VKWebAppStorageSet',{key:SK,value:val});}catch(e){}
   try{localStorage.setItem(SK,val);}catch(e){}
   try{const exp=new Date(Date.now()+48*60*60*1000).toUTCString();document.cookie=SK+'='+encodeURIComponent(val)+'; expires='+exp+'; path=/; SameSite=None; Secure';}catch(e){}
 }
